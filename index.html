@@ -22,7 +22,6 @@
       --shadow: 0 24px 80px rgba(0,0,0,.55);
       --shadow-soft: 0 16px 50px rgba(0,0,0,.35);
 
-      /* TO jest “linijka” dla CAŁEJ kolumny (System + sekcje) */
       --main-width: 920px;
     }
 
@@ -93,16 +92,14 @@
       -webkit-user-drag: none;
     }
 
-    /* TU jest cały sekret: jedna wyśrodkowana kolumna dla wszystkiego */
     .centerColumn {
       width: min(var(--main-width), 100%);
-      margin: 0 auto;              /* <-- centrowanie kolumny */
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
 
-    /* Body hero ma tylko ustawić środek pionowo */
     .heroBody {
       flex: 1;
       min-height: 0;
@@ -170,7 +167,6 @@
       border-color: rgba(255,255,255,1);
     }
 
-    /* PANELE */
     .panelBox {
       width: 100%;
       background: var(--panel);
@@ -207,7 +203,6 @@
       max-width: 680px;
     }
 
-    /* CZYM SIĘ ZAJMUJEMY */
     .servicesGrid {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -257,7 +252,6 @@
 
     .serviceCard li { margin: 6px 0; }
 
-    /* WYKONANE PRACE (karuzela) */
     .worksWrap { position: relative; }
 
     .worksTrack {
@@ -285,6 +279,7 @@
       position: relative;
       scroll-snap-align: start;
       transition: transform .18s ease, border-color .2s ease;
+      cursor: pointer;
     }
 
     .workItem:hover {
@@ -373,7 +368,6 @@
       border-radius: 0 14px 14px 0;
     }
 
-    /* HERO FOOTER */
     .heroFooter {
       text-align: center;
       display: flex;
@@ -406,7 +400,6 @@
       letter-spacing: 1px;
     }
 
-    /* PRICING GRID (modal) */
     .pricing {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -450,7 +443,6 @@
       padding: 14px 18px;
     }
 
-    /* MODALE */
     .modal {
       position: fixed;
       inset: 0;
@@ -550,39 +542,92 @@
       background: rgba(0,0,0,.38);
     }
 
-    .checkboxes {
-      margin-top: 6px;
-      display: grid;
-      gap: 8px;
+    /* separator: równa linia + delikatny "glow" startowy (bez grubego lewego końca) */
+    .separator {
+      margin-top: 16px;
+      padding-top: 16px;
+      position: relative;
+    }
+    .separator::before {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; top: 0;
+      height: 1px;
+      background: rgba(255,255,255,.12);
+    }
+    .separator::after {
+      content: "";
+      position: absolute;
+      left: 0; top: 0;
+      width: 180px;
+      height: 1px;
+      background: linear-gradient(to right, rgba(255,255,255,.22), rgba(255,255,255,0));
+      pointer-events: none;
     }
 
-    .checkboxes label {
+    /* LIGHTBOX */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.82);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      padding: 18px;
+    }
+
+    .lightbox.active { display: flex; }
+
+    .lightboxBox {
+      width: min(980px, 100%);
+      background: rgba(15,15,15,.92);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.65);
+      overflow: hidden;
+      position: relative;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      animation: pop .14s ease-out;
+    }
+
+    .lightboxImg {
+      width: 100%;
+      max-height: 78vh;
+      display: block;
+      object-fit: contain;
+      background: rgba(0,0,0,.35);
+    }
+
+    .lightboxBar {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-top: 0;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.75);
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .lightboxClose {
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.85);
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
       cursor: pointer;
-      text-transform: none;
-      letter-spacing: 0;
-      color: rgba(255,255,255,.80);
-      background: rgba(0,0,0,.22);
-      border: 1px solid rgba(255,255,255,.10);
-      padding: 10px 12px;
-      border-radius: 12px;
-      transition: border-color .18s ease, background .18s ease, transform .18s ease;
+      transition: transform .18s ease, background .2s ease, border-color .2s ease;
     }
 
-    .checkboxes label:hover {
+    .lightboxClose:hover {
       transform: translateY(-1px);
-      border-color: rgba(255,255,255,.20);
-      background: rgba(0,0,0,.26);
-    }
-
-    .checkboxes input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      margin: 0;
-      accent-color: #ffffff;
+      border-color: rgba(255,255,255,.45);
+      background: rgba(255,255,255,.10);
     }
 
     @media (max-width: 980px) {
@@ -612,6 +657,7 @@
       .btn { width: 100%; }
       .modal-box { padding: 18px; }
       .modal-close { width: 40px; height: 40px; }
+      .lightboxClose { width: 40px; height: 40px; }
     }
 
     @media (max-height: 820px) {
@@ -638,7 +684,6 @@
       </div>
 
       <div class="heroBody">
-        <!-- WSZYSTKO w jednej wyśrodkowanej kolumnie -->
         <div class="centerColumn">
           <div class="heroCard">
             <h1>System zleceń</h1>
@@ -715,28 +760,28 @@
               <button class="carouselBtn right" type="button" onclick="scrollWorks(1)" aria-label="Następne">›</button>
 
               <div class="worksTrack" id="worksTrack">
-                <!-- PODMIEŃ src NA SWOJE ZDJĘCIA -->
-                <div class="workItem">
+                <!-- PODMIEŃ src NA SWOJE ZDJĘCIA (a jeśli chcesz osobne "full", wstaw w data-full) -->
+                <div class="workItem" data-full="">
                   <img src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20800%20500%27%3E%3Crect%20width%3D%27800%27%20height%3D%27500%27%20fill%3D%27%23111111%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2750%25%27%20dominant-baseline%3D%27middle%27%20text-anchor%3D%27middle%27%20fill%3D%27%23ffffff%27%20font-family%3D%27Inter%2C%20Arial%27%20font-size%3D%2744%27%20letter-spacing%3D%273%27%3EWSTAW%20ZDJ%C4%98CIE%201%3C/text%3E%3C/svg%3E" alt="Wykonana praca 1">
                   <div class="workCaption">Przykład #1</div>
                 </div>
 
-                <div class="workItem">
+                <div class="workItem" data-full="">
                   <img src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20800%20500%27%3E%3Crect%20width%3D%27800%27%20height%3D%27500%27%20fill%3D%27%23111111%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2750%25%27%20dominant-baseline%3D%27middle%27%20text-anchor%3D%27middle%27%20fill%3D%27%23ffffff%27%20font-family%3D%27Inter%2C%20Arial%27%20font-size%3D%2744%27%20letter-spacing%3D%273%27%3EWSTAW%20ZDJ%C4%98CIE%202%3C/text%3E%3C/svg%3E" alt="Wykonana praca 2">
                   <div class="workCaption">Przykład #2</div>
                 </div>
 
-                <div class="workItem">
+                <div class="workItem" data-full="">
                   <img src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20800%20500%27%3E%3Crect%20width%3D%27800%27%20height%3D%27500%27%20fill%3D%27%23111111%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2750%25%27%20dominant-baseline%3D%27middle%27%20text-anchor%3D%27middle%27%20fill%3D%27%23ffffff%27%20font-family%3D%27Inter%2C%20Arial%27%20font-size%3D%2744%27%20letter-spacing%3D%273%27%3EWSTAW%20ZDJ%C4%98CIE%203%3C/text%3E%3C/svg%3E" alt="Wykonana praca 3">
                   <div class="workCaption">Przykład #3</div>
                 </div>
 
-                <div class="workItem">
+                <div class="workItem" data-full="">
                   <img src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20800%20500%27%3E%3Crect%20width%3D%27800%27%20height%3D%27500%27%20fill%3D%27%23111111%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2750%25%27%20dominant-baseline%3D%27middle%27%20text-anchor%3D%27middle%27%20fill%3D%27%23ffffff%27%20font-family%3D%27Inter%2C%20Arial%27%20font-size%3D%2744%27%20letter-spacing%3D%273%27%3EWSTAW%20ZDJ%C4%98CIE%204%3C/text%3E%3C/svg%3E" alt="Wykonana praca 4">
                   <div class="workCaption">Przykład #4</div>
                 </div>
 
-                <div class="workItem">
+                <div class="workItem" data-full="">
                   <img src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20800%20500%27%3E%3Crect%20width%3D%27800%27%20height%3D%27500%27%20fill%3D%27%23111111%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2750%25%27%20dominant-baseline%3D%27middle%27%20text-anchor%3D%27middle%27%20fill%3D%27%23ffffff%27%20font-family%3D%27Inter%2C%20Arial%27%20font-size%3D%2744%27%20letter-spacing%3D%273%27%3EWSTAW%20ZDJ%C4%98CIE%205%3C/text%3E%3C/svg%3E" alt="Wykonana praca 5">
                   <div class="workCaption">Przykład #5</div>
                 </div>
@@ -769,114 +814,153 @@
         <div class="card">
           <h3>TUNING WIZUALNY</h3>
           <p>Detailing, folie, felgi, oświetlenie, elementy aero. Zero grzebania w silniku.</p>
-          <button class="btn" onclick="openModal('Tuning wizualny')">Złóż zlecenie</button>
+          <button class="btn" onclick="openOrderModal('Tuning wizualny')">Złóż zlecenie</button>
         </div>
 
         <div class="card">
           <h3>TUNING MECHANICZNY</h3>
           <p>Zawieszenie, hamulce, dolot/wydech, chłodzenie, strojenie.</p>
-          <button class="btn" onclick="openModal('Tuning mechaniczny')">Złóż zlecenie</button>
+          <button class="btn" onclick="openOrderModal('Tuning mechaniczny')">Złóż zlecenie</button>
         </div>
 
         <div class="card">
           <h3>PEŁEN TUNING</h3>
           <p>Projekt od A do Z: styling + mechanika + zestrojenie całości, żeby to jeździło jak wygląda.</p>
-          <button class="btn" onclick="openModal('Pełen tuning')">Złóż zlecenie</button>
+          <button class="btn" onclick="openOrderModal('Pełen tuning')">Złóż zlecenie</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- MODAL: ZLECENIE -->
-  <div class="modal" id="modal">
+  <div class="modal" id="orderModal">
     <div class="modal-box">
       <div class="modal-top">
-        <h3 id="modalTitle">Zlecenie</h3>
-        <button class="modal-close" onclick="document.getElementById('modal').classList.remove('active')" aria-label="Zamknij">✕</button>
+        <h3 id="orderTitle">Zlecenie</h3>
+        <button class="modal-close" onclick="closeOrderModal()" aria-label="Zamknij">✕</button>
       </div>
 
-      <label>Nick Discord</label>
-      <input id="discord" placeholder="Nick#0000" />
-
-      <label>Zakres modyfikacji</label>
-      <div class="checkboxes">
-        <label><input type="checkbox" value="Tuning wizualny"> Tuning wizualny</label>
-        <label><input type="checkbox" value="Tuning mechaniczny"> Tuning mechaniczny</label>
-        <label><input type="checkbox" value="Pełen tuning"> Pełen tuning</label>
-      </div>
+      <label>Numer IC</label>
+      <input id="icNumber" placeholder="Np. 12345" />
 
       <label>Dodatkowe informacje</label>
       <textarea id="notes" rows="4" placeholder="Np. auto, budżet, priorytet, termin..."></textarea>
 
-      <button class="btn" style="margin-top:18px;width:100%" onclick="sendWebhook()">Wyślij zlecenie</button>
+      <div class="separator">
+        <label>Informacje OOC</label>
+        <input id="discord" placeholder="Nick#0000" />
+      </div>
+
+      <button class="btn" style="margin-top:18px;width:100%" onclick="sendOrder()">Wyślij zlecenie</button>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox">
+    <div class="lightboxBox" role="dialog" aria-modal="true" aria-label="Podgląd zdjęcia">
+      <img class="lightboxImg" id="lightboxImg" src="" alt="Podgląd">
+      <div class="lightboxBar">
+        <div id="lightboxTitle">Wykonana praca</div>
+        <button class="lightboxClose" type="button" onclick="closeLightbox()" aria-label="Zamknij">✕</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const WEBHOOK_URL = "https://discord.com/api/webhooks/1460701632709787650/M0GVB9Oz8D4OIs-A4cKUPj0P8Lu0YFtLgTRg3nr02TqvwyfwqcTq95kJUg-lFFHqXXWP";
+    const WORKER_URL = "https://zenith-ticket.ervyn-studio.workers.dev";
     let selectedPackage = "";
 
     function openPricingModal() {
       document.getElementById('pricingModal').classList.add('active');
     }
-
     function closePricingModal() {
       document.getElementById('pricingModal').classList.remove('active');
     }
 
-    function openModal(pkg) {
+    function openOrderModal(pkg) {
       selectedPackage = pkg;
       closePricingModal();
 
-      document.getElementById('modalTitle').innerText = "Zlecenie – " + pkg;
+      document.getElementById('orderTitle').innerText = "Zlecenie – " + pkg;
+      document.getElementById('icNumber').value = "";
+      document.getElementById('notes').value = "";
+      document.getElementById('discord').value = "";
 
-      const checks = [...document.querySelectorAll('.checkboxes input[type=checkbox]')];
-      checks.forEach(c => c.checked = false);
-
-      const match = checks.find(c => c.value.toLowerCase() === pkg.toLowerCase());
-      if (match) match.checked = true;
-
-      document.getElementById('modal').classList.add('active');
+      document.getElementById('orderModal').classList.add('active');
+    }
+    function closeOrderModal() {
+      document.getElementById('orderModal').classList.remove('active');
     }
 
-    document.getElementById('modal').addEventListener('click', e => {
-      if (e.target.id === 'modal') e.target.classList.remove('active');
-    });
-
+    // Kliknięcie w tło zamyka modale
     document.getElementById('pricingModal').addEventListener('click', e => {
-      if (e.target.id === 'pricingModal') e.target.classList.remove('active');
+      if (e.target.id === 'pricingModal') closePricingModal();
+    });
+    document.getElementById('orderModal').addEventListener('click', e => {
+      if (e.target.id === 'orderModal') closeOrderModal();
     });
 
-    function sendWebhook() {
-      const discord = document.getElementById('discord').value;
-      const notes = document.getElementById('notes').value;
-      const parts = [...document.querySelectorAll('.checkboxes input[type=checkbox]:checked')].map(c => c.value);
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      closePricingModal();
+      closeOrderModal();
+      closeLightbox();
+    });
 
-      if (!discord || parts.length === 0) {
-        alert('Uzupełnij nick Discord i wybierz modyfikacje');
+    async function sendOrder() {
+      const icNumber = document.getElementById('icNumber').value.trim();
+      const notes = document.getElementById('notes').value.trim();
+      const discord = document.getElementById('discord').value.trim();
+
+      if (!selectedPackage) {
+        alert('Wybierz pakiet.');
+        return;
+      }
+      if (!icNumber) {
+        alert('Uzupełnij Numer IC.');
+        return;
+      }
+      if (!discord) {
+        alert('Uzupełnij nick Discord w Informacje OOC.');
         return;
       }
 
-      fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          embeds: [{
-            title: '🏁 Zenith Performance – Zlecenie',
-            color: 16777215,
-            fields: [
-              { name: 'Pakiet', value: selectedPackage || '—', inline: true },
-              { name: 'Discord', value: discord, inline: true },
-              { name: 'Modyfikacje', value: parts.join(', ') || '—' },
-              { name: 'Uwagi', value: notes || '—' }
-            ],
-            footer: { text: 'Zenith Performance' }
-          }]
-        })
-      });
+      const payload = {
+        embeds: [{
+          title: '🏁 Zenith Performance – Zlecenie',
+          color: 16777215,
+          fields: [
+            { name: 'Pakiet', value: selectedPackage, inline: true },
+            { name: 'Numer IC', value: icNumber, inline: true },
+            { name: 'Discord (OOC)', value: discord, inline: true },
+            { name: 'Uwagi', value: notes || '—' }
+          ],
+          footer: { text: 'Zenith Performance' }
+        }]
+      };
 
-      document.getElementById('modal').classList.remove('active');
-      alert('Zlecenie wysłane');
+      try {
+        const res = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          let msg = 'Nie udało się wysłać zlecenia.';
+          try {
+            const j = await res.json();
+            if (j && j.error) msg += " " + j.error;
+          } catch {}
+          alert(msg);
+          return;
+        }
+
+        closeOrderModal();
+        alert('Zlecenie wysłane');
+      } catch (err) {
+        alert('Błąd połączenia. Sprawdź WORKER_URL i publikację Workera.');
+      }
     }
 
     function scrollWorks(dir) {
@@ -885,6 +969,40 @@
       const step = Math.max(240, Math.floor(track.clientWidth * 0.75));
       track.scrollBy({ left: dir * step, behavior: 'smooth' });
     }
+
+    function openLightbox(src, title) {
+      const lb = document.getElementById('lightbox');
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightboxTitle').textContent = title || 'Wykonana praca';
+      lb.classList.add('active');
+    }
+
+    function closeLightbox() {
+      const lb = document.getElementById('lightbox');
+      lb.classList.remove('active');
+      document.getElementById('lightboxImg').src = "";
+    }
+
+    document.getElementById('lightbox').addEventListener('click', (e) => {
+      if (e.target.id === 'lightbox') closeLightbox();
+    });
+
+    // Klik w zdjęcie otwiera lightbox
+    (function bindWorkClicks() {
+      const items = document.querySelectorAll('.workItem');
+      items.forEach((item) => {
+        item.addEventListener('click', () => {
+          const img = item.querySelector('img');
+          const cap = item.querySelector('.workCaption');
+
+          const full = item.getAttribute('data-full');
+          const src = (full && full.trim().length > 0) ? full : (img ? img.src : "");
+          const title = cap ? cap.textContent : "Wykonana praca";
+
+          if (src) openLightbox(src, title);
+        });
+      });
+    })();
   </script>
 </body>
 </html>
