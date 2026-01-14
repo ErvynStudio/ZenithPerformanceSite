@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zenith Performance</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-image: url('https://i.imgur.com/ZOeB1jP.png');
+
+      --bg: #050505;
+      --panel: rgba(15, 15, 15, .74);
+      --panel-strong: rgba(15, 15, 15, .92);
+      --accent: #ffffff;
+      --muted: rgba(255,255,255,.65);
+      --border: rgba(255,255,255,.10);
+
+      --radius: 18px;
+      --shadow: 0 24px 80px rgba(0,0,0,.55);
+      --shadow-soft: 0 16px 50px rgba(0,0,0,.35);
+
+      /* TO jest “linijka” dla CAŁEJ kolumny (System + sekcje) */
+      --main-width: 920px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      color: var(--accent);
+      background: var(--bg);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: var(--bg-image);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: saturate(1.05) contrast(1.05);
+      transform: scale(1.02);
+      z-index: -2;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(1000px 600px at 50% 0%, rgba(0,0,0,.25), rgba(0,0,0,.75)),
+        linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,.78));
+      z-index: -1;
+    }
+
+    .container {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header.hero { min-height: 100vh; }
+
+    .heroLayout {
+      min-height: 100vh;
+      padding: 22px 0 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .brandbar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-top: 6px;
+    }
+
+    .brandbar img {
+      width: clamp(160px, 26vw, 360px);
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 18px 45px rgba(0,0,0,.55));
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* TU jest cały sekret: jedna wyśrodkowana kolumna dla wszystkiego */
+    .centerColumn {
+      width: min(var(--main-width), 100%);
+      margin: 0 auto;              /* <-- centrowanie kolumny */
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Body hero ma tylko ustawić środek pionowo */
+    .heroBody {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .heroCard {
+      width: 100%;
+      text-align: center;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: clamp(18px, 3.6vw, 40px);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .heroCard h1 {
+      margin: 0;
+      font-size: clamp(24px, 3.2vw, 44px);
+      letter-spacing: 1px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .heroCard p.sub {
+      margin: 14px auto 0;
+      max-width: 780px;
+      color: rgba(255,255,255,.72);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .heroActions {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 14px 22px;
+      border: 1px solid rgba(255,255,255,.75);
+      background: transparent;
+      color: var(--accent);
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform .18s ease, background .25s ease, color .25s ease, border-color .25s ease;
+      border-radius: 999px;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: var(--accent);
+      color: #070707;
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,1);
+    }
+
+    /* PANELE */
+    .panelBox {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      padding: 14px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .panelHeader {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .panelHeader h2 {
+      margin: 0;
+      font-weight: 800;
+      letter-spacing: 3px;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .panelHeader p {
+      margin: 0;
+      color: rgba(255,255,255,.62);
+      font-size: 12px;
+      line-height: 1.55;
+      max-width: 680px;
+    }
+
+    /* CZYM SIĘ ZAJMUJEMY */
+    .servicesGrid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .serviceCard {
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding: 12px;
+      transition: transform .18s ease, border-color .2s ease, background .2s ease;
+      min-height: 122px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .serviceCard::before {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; top: 0;
+      height: 2px;
+      background: rgba(255,255,255,.25);
+      opacity: .85;
+    }
+
+    .serviceCard:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.20);
+      background: rgba(0,0,0,.28);
+    }
+
+    .serviceCard h3 {
+      margin: 0;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .serviceCard ul {
+      margin: 8px 0 0;
+      padding-left: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .serviceCard li { margin: 6px 0; }
+
+    /* WYKONANE PRACE (karuzela) */
+    .worksWrap { position: relative; }
+
+    .worksTrack {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 2px 44px 10px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .worksTrack::-webkit-scrollbar { height: 8px; }
+    .worksTrack::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,.16);
+      border-radius: 999px;
+    }
+
+    .workItem {
+      flex: 0 0 220px;
+      height: 128px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      position: relative;
+      scroll-snap-align: start;
+      transition: transform .18s ease, border-color .2s ease;
+    }
+
+    .workItem:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.24);
+    }
+
+    .workItem img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: contrast(1.05) saturate(1.05);
+    }
+
+    .workItem::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0));
+      pointer-events: none;
+      opacity: .95;
+    }
+
+    .workCaption {
+      position: absolute;
+      left: 10px;
+      bottom: 10px;
+      right: 10px;
+      z-index: 1;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.90);
+      text-shadow: 0 10px 30px rgba(0,0,0,.55);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .carouselBtn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(0,0,0,.30);
+      color: rgba(255,255,255,.88);
+      cursor: pointer;
+      z-index: 2;
+      transition: transform .18s ease, border-color .2s ease, background .2s ease;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .carouselBtn:hover {
+      transform: translateY(-50%) translateY(-1px);
+      border-color: rgba(255,255,255,.45);
+      background: rgba(255,255,255,.10);
+    }
+
+    .carouselBtn.left { left: 8px; }
+    .carouselBtn.right { right: 8px; }
+
+    .worksWrap::before,
+    .worksWrap::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 36px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .worksWrap::before {
+      left: 0;
+      background: linear-gradient(to right, rgba(15,15,15,.85), rgba(15,15,15,0));
+      border-radius: 14px 0 0 14px;
+    }
+
+    .worksWrap::after {
+      right: 0;
+      background: linear-gradient(to left, rgba(15,15,15,.85), rgba(15,15,15,0));
+      border-radius: 0 14px 14px 0;
+    }
+
+    /* HERO FOOTER */
+    .heroFooter {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-bottom: 6px;
+      margin-top: 2px;
+    }
+
+    .heroTagline {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: rgba(255,255,255,.55);
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .heroTagline .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.6);
+      margin: 0 10px;
+    }
+
+    .heroCopy {
+      color: rgba(255,255,255,.45);
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+
+    /* PRICING GRID (modal) */
+    .pricing {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.10);
+      padding: 24px;
+      border-radius: calc(var(--radius) - 6px);
+      transition: transform .18s ease, border-color .2s ease, background .2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255,255,255,.22);
+      background: rgba(0,0,0,.28);
+    }
+
+    .card h3 {
+      margin: 0;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-size: 16px;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+      margin: 10px 0 0;
+      flex: 1;
+    }
+
+    .card .btn {
+      margin-top: 18px;
+      width: 100%;
+      padding: 14px 18px;
+    }
+
+    /* MODALE */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      padding: 18px;
+    }
+
+    .modal.active { display: flex; }
+
+    .modal-box {
+      width: 100%;
+      max-width: 560px;
+      background: var(--panel-strong);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 26px;
+      position: relative;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      animation: pop .14s ease-out;
+    }
+
+    .modal-box.pricingBox {
+      max-width: 980px;
+      max-height: 85vh;
+      overflow: auto;
+    }
+
+    @keyframes pop {
+      from { transform: translateY(8px) scale(.98); opacity: .0; }
+      to   { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .modal-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .modal-box h3 {
+      margin: 0;
+      letter-spacing: 1px;
+      font-size: 16px;
+      text-transform: uppercase;
+    }
+
+    .modal-close {
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.85);
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform .18s ease, background .2s ease, border-color .2s ease;
+      flex: 0 0 auto;
+    }
+
+    .modal-close:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.45);
+      background: rgba(255,255,255,.10);
+    }
+
+    label {
+      display: block;
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    input, textarea {
+      width: 100%;
+      margin-top: 8px;
+      padding: 12px 12px;
+      background: rgba(0,0,0,.30);
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--accent);
+      border-radius: 12px;
+      outline: none;
+      transition: border-color .18s ease, background .18s ease;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    input:focus, textarea:focus {
+      border-color: rgba(255,255,255,.42);
+      background: rgba(0,0,0,.38);
+    }
+
+    .checkboxes {
+      margin-top: 6px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .checkboxes label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 0;
+      cursor: pointer;
+      text-transform: none;
+      letter-spacing: 0;
+      color: rgba(255,255,255,.80);
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.10);
+      padding: 10px 12px;
+      border-radius: 12px;
+      transition: border-color .18s ease, background .18s ease, transform .18s ease;
+    }
+
+    .checkboxes label:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.20);
+      background: rgba(0,0,0,.26);
+    }
+
+    .checkboxes input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      accent-color: #ffffff;
+    }
+
+    @media (max-width: 980px) {
+      .servicesGrid {
+        grid-template-columns: unset;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(240px, 1fr);
+        overflow-x: auto;
+        padding-bottom: 8px;
+        scroll-snap-type: x mandatory;
+      }
+      .serviceCard { scroll-snap-align: start; }
+      .servicesGrid::-webkit-scrollbar { height: 8px; }
+      .servicesGrid::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,.16);
+        border-radius: 999px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .worksTrack { padding: 2px 0 10px; }
+      .carouselBtn { display: none; }
+      .worksWrap::before, .worksWrap::after { display: none; }
+    }
+
+    @media (max-width: 520px) {
+      .btn { width: 100%; }
+      .modal-box { padding: 18px; }
+      .modal-close { width: 40px; height: 40px; }
+    }
+
+    @media (max-height: 820px) {
+      .heroCard p.sub {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .panelHeader p { display: none; }
+      .serviceCard { min-height: 112px; }
+      .serviceCard ul li:nth-child(n+3) { display: none; }
+      .workItem { height: 112px; }
+      .workCaption { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="hero">
+    <div class="container heroLayout">
+      <div class="brandbar">
+        <img src="https://i.imgur.com/3XoPaj9.png" alt="Logo firmy" />
+      </div>
+
+      <div class="heroBody">
+        <!-- WSZYSTKO w jednej wyśrodkowanej kolumnie -->
+        <div class="centerColumn">
+          <div class="heroCard">
+            <h1>System zleceń</h1>
+            <p class="sub">
+              Złóż zlecenie w kilka minut. Wypełnij formularz poniżej, a przygotujemy wstępną wycenę i plan modyfikacji dopasowany do Twojego auta.
+              Finalny zakres i koszt potwierdzamy po oględzinach pojazdu.
+            </p>
+            <div class="heroActions">
+              <button class="btn" onclick="openPricingModal()">Zobacz pakiety</button>
+            </div>
+          </div>
+
+          <div class="panelBox">
+            <div class="panelHeader">
+              <h2>Czym się zajmujemy</h2>
+              <p>Mechanika, ECU, prowadzenie, diagnostyka i wizual. Krótko, konkretnie i bez bajek.</p>
+            </div>
+
+            <div class="servicesGrid">
+              <div class="serviceCard">
+                <h3>Tuning mechaniczny</h3>
+                <ul>
+                  <li>Dolot i wydech</li>
+                  <li>Chłodzenie i osprzęt</li>
+                  <li>Napęd pod build</li>
+                </ul>
+              </div>
+
+              <div class="serviceCard">
+                <h3>Strojenie ECU</h3>
+                <ul>
+                  <li>Mapowanie pod części</li>
+                  <li>Korekty po swapach</li>
+                  <li>Reakcja na gaz</li>
+                </ul>
+              </div>
+
+              <div class="serviceCard">
+                <h3>Układ jezdny</h3>
+                <ul>
+                  <li>Zawieszenie pod styl</li>
+                  <li>Stabilizacja mocy</li>
+                  <li>Hamulce i bezpieczeństwo</li>
+                </ul>
+              </div>
+
+              <div class="serviceCard">
+                <h3>Diagnostyka precyzyjna</h3>
+                <ul>
+                  <li>Błędy i spadki mocy</li>
+                  <li>Po „tuningu po kosztach”</li>
+                  <li>Ocena przed przebudową</li>
+                </ul>
+              </div>
+
+              <div class="serviceCard">
+                <h3>Wizual z uzasadnieniem</h3>
+                <ul>
+                  <li>Aero, które działa</li>
+                  <li>Koła i hamulce</li>
+                  <li>Funkcja, nie pokaz</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="panelBox">
+            <div class="panelHeader">
+              <h2>Wykonane prace</h2>
+            </div>
+
+            <div class="worksWrap">
+              <button class="carouselBtn left" type="button" onclick="scrollWorks(-1)" aria-label="Poprzednie">‹</button>
+              <button class="carouselBtn right" type="button" onclick="scrollWorks(1)" aria-label="Następne">›</button>
+
+              <div class="worksTrack" id="worksTrack">
+                <!-- PODMIEŃ src NA SWOJE ZDJĘCIA -->
+                <div class="workItem">
+                  <img src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20800%20500%27%3E%3Crect%20width%3D%27800%27%20height%3D%27500%27%20fill%3D%27%23111111%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2750%25%27%20dominant-baseline%3D%27middle%27%20text-anchor%3D%27middle%27%20fill%3D%27%23ffffff%27%20font-family%3D%27Inter%2C%20Arial%27%20font-size%3D%2744%27%20letter-spacing%3D%273%27%3EWSTAW%20ZDJ%C4%98CIE%201%3C/text%3E%3C/svg%3E" alt="Wykonana praca 1">
+                  <div class="workCaption">Przykład #1</div>
+                </div>
+
+                <div class="workItem">
+                  <img src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20800%20500%27%3E%3Crect%20width%3D%27800%27%20height%3D%27500%27%20fill%3D%27%23111111%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2750%25%27%20dominant-baseline%3D%27middle%27%20text-anchor%3D%27middle%27%20fill%3D%27%23ffffff%27%20font-family%3D%27Inter%2C%20Arial%27%20font-size%3D%2744%27%20letter-spacing%3D%273%27%3EWSTAW%20ZDJ%C4%98CIE%202%3C/text%3E%3C/svg%3E" alt="Wykonana praca 2">
+                  <div class="workCaption">Przykład #2</div>
+                </div>
+
+                <div class="workItem">
+                  <img src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20800%20500%27%3E%3Crect%20width%3D%27800%27%20height%3D%27500%27%20fill%3D%27%23111111%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2750%25%27%20dominant-baseline%3D%27middle%27%20text-anchor%3D%27middle%27%20fill%3D%27%23ffffff%27%20font-family%3D%27Inter%2C%20Arial%27%20font-size%3D%2744%27%20letter-spacing%3D%273%27%3EWSTAW%20ZDJ%C4%98CIE%203%3C/text%3E%3C/svg%3E" alt="Wykonana praca 3">
+                  <div class="workCaption">Przykład #3</div>
+                </div>
+
+                <div class="workItem">
+                  <img src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20800%20500%27%3E%3Crect%20width%3D%27800%27%20height%3D%27500%27%20fill%3D%27%23111111%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2750%25%27%20dominant-baseline%3D%27middle%27%20text-anchor%3D%27middle%27%20fill%3D%27%23ffffff%27%20font-family%3D%27Inter%2C%20Arial%27%20font-size%3D%2744%27%20letter-spacing%3D%273%27%3EWSTAW%20ZDJ%C4%98CIE%204%3C/text%3E%3C/svg%3E" alt="Wykonana praca 4">
+                  <div class="workCaption">Przykład #4</div>
+                </div>
+
+                <div class="workItem">
+                  <img src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20800%20500%27%3E%3Crect%20width%3D%27800%27%20height%3D%27500%27%20fill%3D%27%23111111%27/%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2750%25%27%20dominant-baseline%3D%27middle%27%20text-anchor%3D%27middle%27%20fill%3D%27%23ffffff%27%20font-family%3D%27Inter%2C%20Arial%27%20font-size%3D%2744%27%20letter-spacing%3D%273%27%3EWSTAW%20ZDJ%C4%98CIE%205%3C/text%3E%3C/svg%3E" alt="Wykonana praca 5">
+                  <div class="workCaption">Przykład #5</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!-- /centerColumn -->
+      </div>
+
+      <div class="heroFooter">
+        <div class="heroTagline">
+          Precision <span class="dot"></span> Power <span class="dot"></span> Performance
+        </div>
+        <div class="heroCopy">
+          Zenith Performance © By KAMY &amp; 𝔈𝔯𝔳𝔶𝔫
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MODAL: ZOBACZ PAKIETY -->
+  <div class="modal" id="pricingModal">
+    <div class="modal-box pricingBox">
+      <div class="modal-top">
+        <h3>Zobacz pakiety</h3>
+        <button class="modal-close" onclick="closePricingModal()" aria-label="Zamknij">✕</button>
+      </div>
+
+      <div class="pricing">
+        <div class="card">
+          <h3>TUNING WIZUALNY</h3>
+          <p>Detailing, folie, felgi, oświetlenie, elementy aero. Zero grzebania w silniku.</p>
+          <button class="btn" onclick="openModal('Tuning wizualny')">Złóż zlecenie</button>
+        </div>
+
+        <div class="card">
+          <h3>TUNING MECHANICZNY</h3>
+          <p>Zawieszenie, hamulce, dolot/wydech, chłodzenie, strojenie.</p>
+          <button class="btn" onclick="openModal('Tuning mechaniczny')">Złóż zlecenie</button>
+        </div>
+
+        <div class="card">
+          <h3>PEŁEN TUNING</h3>
+          <p>Projekt od A do Z: styling + mechanika + zestrojenie całości, żeby to jeździło jak wygląda.</p>
+          <button class="btn" onclick="openModal('Pełen tuning')">Złóż zlecenie</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ZLECENIE -->
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <div class="modal-top">
+        <h3 id="modalTitle">Zlecenie</h3>
+        <button class="modal-close" onclick="document.getElementById('modal').classList.remove('active')" aria-label="Zamknij">✕</button>
+      </div>
+
+      <label>Nick Discord</label>
+      <input id="discord" placeholder="Nick#0000" />
+
+      <label>Zakres modyfikacji</label>
+      <div class="checkboxes">
+        <label><input type="checkbox" value="Tuning wizualny"> Tuning wizualny</label>
+        <label><input type="checkbox" value="Tuning mechaniczny"> Tuning mechaniczny</label>
+        <label><input type="checkbox" value="Pełen tuning"> Pełen tuning</label>
+      </div>
+
+      <label>Dodatkowe informacje</label>
+      <textarea id="notes" rows="4" placeholder="Np. auto, budżet, priorytet, termin..."></textarea>
+
+      <button class="btn" style="margin-top:18px;width:100%" onclick="sendWebhook()">Wyślij zlecenie</button>
+    </div>
+  </div>
+
+  <script>
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1460701632709787650/M0GVB9Oz8D4OIs-A4cKUPj0P8Lu0YFtLgTRg3nr02TqvwyfwqcTq95kJUg-lFFHqXXWP";
+    let selectedPackage = "";
+
+    function openPricingModal() {
+      document.getElementById('pricingModal').classList.add('active');
+    }
+
+    function closePricingModal() {
+      document.getElementById('pricingModal').classList.remove('active');
+    }
+
+    function openModal(pkg) {
+      selectedPackage = pkg;
+      closePricingModal();
+
+      document.getElementById('modalTitle').innerText = "Zlecenie – " + pkg;
+
+      const checks = [...document.querySelectorAll('.checkboxes input[type=checkbox]')];
+      checks.forEach(c => c.checked = false);
+
+      const match = checks.find(c => c.value.toLowerCase() === pkg.toLowerCase());
+      if (match) match.checked = true;
+
+      document.getElementById('modal').classList.add('active');
+    }
+
+    document.getElementById('modal').addEventListener('click', e => {
+      if (e.target.id === 'modal') e.target.classList.remove('active');
+    });
+
+    document.getElementById('pricingModal').addEventListener('click', e => {
+      if (e.target.id === 'pricingModal') e.target.classList.remove('active');
+    });
+
+    function sendWebhook() {
+      const discord = document.getElementById('discord').value;
+      const notes = document.getElementById('notes').value;
+      const parts = [...document.querySelectorAll('.checkboxes input[type=checkbox]:checked')].map(c => c.value);
+
+      if (!discord || parts.length === 0) {
+        alert('Uzupełnij nick Discord i wybierz modyfikacje');
+        return;
+      }
+
+      fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          embeds: [{
+            title: '🏁 Zenith Performance – Zlecenie',
+            color: 16777215,
+            fields: [
+              { name: 'Pakiet', value: selectedPackage || '—', inline: true },
+              { name: 'Discord', value: discord, inline: true },
+              { name: 'Modyfikacje', value: parts.join(', ') || '—' },
+              { name: 'Uwagi', value: notes || '—' }
+            ],
+            footer: { text: 'Zenith Performance' }
+          }]
+        })
+      });
+
+      document.getElementById('modal').classList.remove('active');
+      alert('Zlecenie wysłane');
+    }
+
+    function scrollWorks(dir) {
+      const track = document.getElementById('worksTrack');
+      if (!track) return;
+      const step = Math.max(240, Math.floor(track.clientWidth * 0.75));
+      track.scrollBy({ left: dir * step, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
